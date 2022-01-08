@@ -64,6 +64,9 @@ void rectify(Config &config, cv::Mat &imgL, cv::Mat &imgR, cv::Mat &distL, cv::M
     cv::initUndistortRectifyMap(config.K2, config.D2, config.R2, config.P2, imgR.size(), CV_32FC1, mapX, mapY);
     spdlog::trace("Remapping right");
     cv::remap(imgR, distR, mapX, mapY, cv::BORDER_CONSTANT);
+
+    cv::cvtColor(distL, distL, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(distR, distR, cv::COLOR_BGR2GRAY);
 }
 
 void get_depth_map(cv::Mat &imgL, cv::Mat &imgR, cv::Mat &dist) {
@@ -99,7 +102,7 @@ void get_depth_map(cv::Mat &imgL, cv::Mat &imgR, cv::Mat &dist) {
 
 int main(int argc, char *argv[]) {
     auto logger = spdlog::stdout_color_mt("console");
-    logger->set_level(spdlog::level::trace);
+    logger->set_level(spdlog::level::info);
     spdlog::set_default_logger(logger);
     spdlog::info("Started logger");
 
@@ -125,6 +128,10 @@ int main(int argc, char *argv[]) {
         spdlog::debug("Reading frames");
         leftCap >> left;
         rightCap >> right;
+
+        cv::imshow("Left", left);
+        cv::imshow("Right", right);
+
         spdlog::debug("Rectifying image");
         rectify(config, left, right, left, right);
         spdlog::debug("Getting depth map");
