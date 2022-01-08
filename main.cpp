@@ -68,8 +68,8 @@ void rectify(Config &config, cv::Mat &imgL, cv::Mat &imgR, cv::Mat &distL, cv::M
     cv::cvtColor(distL, distL, cv::COLOR_BGR2GRAY);
     cv::cvtColor(distR, distR, cv::COLOR_BGR2GRAY);
 
-    cv::blur(distL, distL, cv::Size(3, 3));
-    cv::blur(distR, distR, cv::Size(3, 3));
+//    cv::blur(distL, distL, cv::Size(3, 3));
+//    cv::blur(distR, distR, cv::Size(3, 3));
 }
 
 void get_depth_map(cv::Mat &imgL, cv::Mat &imgR, cv::Mat &dist) {
@@ -83,8 +83,8 @@ void get_depth_map(cv::Mat &imgL, cv::Mat &imgR, cv::Mat &dist) {
     spdlog::trace("Creating right_matcher");
     auto right_matcher = cv::ximgproc::createRightMatcher(left_matcher);
 
-    auto lmbda = 80000;
-    auto sigma = 1.3;
+    auto lmbda = 12000;
+    auto sigma = 2.5;
     auto visual_multiplier = 6;
 
     spdlog::trace("Creating left_wls_filter");
