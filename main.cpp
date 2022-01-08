@@ -67,14 +67,17 @@ void rectify(Config &config, cv::Mat &imgL, cv::Mat &imgR, cv::Mat &distL, cv::M
 
     cv::cvtColor(distL, distL, cv::COLOR_BGR2GRAY);
     cv::cvtColor(distR, distR, cv::COLOR_BGR2GRAY);
+
+    cv::blur(distL, distL, cv::Size(3, 3));
+    cv::blur(distR, distR, cv::Size(3, 3));
 }
 
 void get_depth_map(cv::Mat &imgL, cv::Mat &imgR, cv::Mat &dist) {
     auto window_size = 3;
     spdlog::trace("Creating left_matcher");
-    auto left_matcher = cv::StereoSGBM::create(-1, 5*16, window_size,
-                                               8 * 3 * window_size, 32 * 3 * window_size, 12,
-                                               63, 10, 50, 32,
+    auto left_matcher = cv::StereoSGBM::create(0, 10*16, 11,
+                                               8 * 3 * 11 * 11, 32 * 3 * 11 * 11, -1,
+                                               0, 10, 200, 3,
                                                cv::StereoSGBM::MODE_SGBM_3WAY);
 
     spdlog::trace("Creating right_matcher");
@@ -95,7 +98,7 @@ void get_depth_map(cv::Mat &imgL, cv::Mat &imgR, cv::Mat &dist) {
     right_matcher->compute(imgR, imgL, dispr);
 
     spdlog::trace("Computing filtered disparity");
-    wls_filter->filter(displ, imgL, dispr, imgR);
+    wls_filter->filter(displ, imgL, displ, dispr);
     spdlog::trace("Normalizing output");
     cv::normalize(displ, dist, 255, 0, cv::NORM_MINMAX, CV_8U);
 }
