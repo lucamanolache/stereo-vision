@@ -34,3 +34,6 @@
 # CLion
 .idea/
 cmake-build-debug/
+
+*.mp4
+*.yml
